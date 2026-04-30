@@ -1,0 +1,12 @@
+# https://hpscterrsys.github.io/eCLM_namelist-generator
+
+format: jb-book
+root: INDEX
+parts:
+
+- caption: User's Guide
+  chapters:
+  - file: users_guide/README
+    title: Scripts for eCLM namelist generation and manipulation
+    sections:
+    - file: users_guide/example_site
