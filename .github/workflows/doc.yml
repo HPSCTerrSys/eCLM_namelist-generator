@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: "docs/_build/html"
-          name: tsmp2_eclm_static_file_generator_docs
+          name: tsmp2_eclm_namelist_generator_docs
 
   deploy:
     if: github.event_name != 'pull_request'
