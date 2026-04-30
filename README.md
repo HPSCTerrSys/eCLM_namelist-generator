@@ -7,6 +7,9 @@
 This repository collects scripts used for generating and manipulating
 eCLM namelist files.
 
+For other resources related to eCLM namelists, see the [generated
+documentation](https://hpscterrsys.github.io/eCLM_namelist-generator/INDEX.html)
+
 ## Usage / Documentation
 
 
