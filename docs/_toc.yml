@@ -10,3 +10,4 @@ parts:
     title: Scripts for eCLM namelist generation and manipulation
     sections:
     - file: users_guide/normalize_namelists
+    - file: users_guide/normalize_stream_files
