@@ -2,7 +2,7 @@
 """
 normalize_namelists.py - Unify style in eCLM-PDAF namelist files.
 
-Applies two transformations to eCLM namelist files (drv_flds_in,
+Applies four transformations to eCLM namelist files (drv_flds_in,
 drv_in, lnd_in, datm_in, mosart_in, and the *_modelio.nml files):
 
   1. Indentation inside namelist groups (&group ... /) is set to exactly
@@ -18,6 +18,10 @@ drv_in, lnd_in, datm_in, mosart_in, and the *_modelio.nml files):
      e.g.:
        hist_fincl1 = 'SOILWATER_10CM', 'H2OSOI',
                      'SOILLIQ', 'SOILICE'
+
+  4. Exactly one space is placed before and after the = sign in every
+     key = value entry (key=value and key  =  value are both rewritten to
+     key = value).
 
 Usage
 -----
@@ -81,11 +85,14 @@ def normalize_content(content):
             # only the delimiter characters are changed, never the value itself.
             body = re.sub(r'"([^"]*)"', lambda m: "'" + m.group(1) + "'", body)
 
-            m = re.match(r"(\w+\s*=\s*)", body)
+            m = re.match(r"(\w+)\s*=\s*(.*)", body, re.DOTALL)
             if m:
-                # Key = value line: record where the value starts so that
-                # continuation lines can be aligned with it.
-                continuation_indent = " " * (2 + len(m.group(1)))
+                # Key = value line: normalize to exactly one space around =,
+                # then record where the value starts so that continuation
+                # lines can be aligned with it.
+                key, value = m.group(1), m.group(2)
+                body = f"{key} = {value}"
+                continuation_indent = " " * (2 + len(key) + 3)  # 2-space indent + "key = "
                 result.append("  " + body + nl)
             elif body.startswith("!"):
                 # Comment line: not a continuation, reset continuation indent.
