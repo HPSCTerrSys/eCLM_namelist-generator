@@ -11,3 +11,4 @@ parts:
     sections:
     - file: users_guide/normalize_namelists
     - file: users_guide/normalize_stream_files
+    - file: users_guide/modify_stream_files

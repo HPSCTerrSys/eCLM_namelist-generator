@@ -9,3 +9,6 @@ generation and manipulation.
 
 - [normalize_stream_files.py](normalize_stream_files.md): Unifies
   style (indentation) in eCLM DATM stream XML files.
+
+- [modify_stream_files.py](modify_stream_files.md): Modifies field
+  values inside eCLM DATM stream XML files.
