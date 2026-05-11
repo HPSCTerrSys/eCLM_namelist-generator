@@ -12,3 +12,6 @@ generation and manipulation.
 
 - [modify_stream_files.py](modify_stream_files.md): Modifies field
   values inside eCLM DATM stream XML files.
+
+- [modify_case_namelists.py](modify_case_namelists.md): Modifies
+  individual key-value entries across eCLM case namelist files.
