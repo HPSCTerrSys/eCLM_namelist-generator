@@ -15,3 +15,7 @@ generation and manipulation.
 
 - [modify_case_namelists.py](modify_case_namelists.md): Modifies
   individual key-value entries across eCLM case namelist files.
+
+- [create_ensemble_namelists.py](create_ensemble_namelists.md):
+  Creates per-ensemble-member namelist files for eCLM-PDAF Data
+  Assimilation experiments.
