@@ -18,6 +18,7 @@ Options
   -r, --rundir DIR          Run directory containing the base namelists (default: .)
   -n, --num_ensemble INT    Number of ensemble members (default: 96)
   -b, --backend BACKEND     Namelist backend: 're' (default) or 'f90nml'
+  -f, --forcings-dir DIR    Forcings directory in stream files (default: ./forcings)
   --suffix-fsurdat          Add ensemble suffix to clm_inparm:fsurdat in lnd_in
 """
 import argparse
@@ -129,7 +130,7 @@ def adapt_lnd_in(iens, suffix_fsurdat=False, backend="re"):
             fh.write(content)
 
 
-def adapt_stream_files(iens, backend="re"):
+def adapt_stream_files(iens, forcings_dir="./forcings", backend="re"):
     """Write per-ensemble XML stream description files.
 
     Must be called after adapt_datm_in, which determines the ensemble
@@ -137,8 +138,8 @@ def adapt_stream_files(iens, backend="re"):
 
     For each stream file listed in datm_in, reads the original XML and
     writes an ensemble-specific copy (named as in datm_in_NNNN), with
-    the fieldInfo/filePath entries under './forcings' redirected to
-    './forcings/real_NNNNN'.
+    the fieldInfo/filePath entries under forcings_dir redirected to
+    '<forcings_dir>/real_NNNNN'.
 
     """
     # Must be called after datm update
@@ -167,9 +168,9 @@ def adapt_stream_files(iens, backend="re"):
             # Check parent
             if filePath.getparent().tag == "fieldInfo":
                 # print(filePath.getparent().tag, filePath.tag)
-                if filePath.text.find("./forcings") > -1:
+                if filePath.text.find(forcings_dir) > -1:
                     filePath.text = filePath.text.replace(
-                        "./forcings", "./forcings/real_" + str(iens).zfill(5)
+                        forcings_dir, forcings_dir + "/real_" + str(iens).zfill(5)
                     )
 
         # Write XML streamfile
@@ -189,7 +190,7 @@ def adapt_stream_files(iens, backend="re"):
             f.write(fstr)
 
 
-def create_ensemble_namelists(iens, suffix_fsurdat=False, backend="re"):
+def create_ensemble_namelists(iens, suffix_fsurdat=False, forcings_dir="./forcings", backend="re"):
     """Create all per-ensemble namelist files for ensemble member iens.
 
     Calls:
@@ -210,7 +211,7 @@ def create_ensemble_namelists(iens, suffix_fsurdat=False, backend="re"):
 
     adapt_mosart_in(iens, backend=backend)
 
-    adapt_stream_files(iens, backend=backend)
+    adapt_stream_files(iens, forcings_dir=forcings_dir, backend=backend)
 
 
 if __name__ == "__main__":
@@ -235,6 +236,11 @@ if __name__ == "__main__":
         help="Backend for reading/writing namelists: 're' (default, regexp) or 'f90nml'",
     )
     parser.add_argument(
+        "-f", "--forcings-dir",
+        default="./forcings",
+        help="Forcings directory used in stream file filePath entries (default: ./forcings)",
+    )
+    parser.add_argument(
         "--suffix-fsurdat",
         action="store_true",
         default=False,
@@ -246,7 +252,8 @@ if __name__ == "__main__":
     os.chdir(args.rundir)
 
     for ens in range(1, args.num_ensemble + 1):
-        create_ensemble_namelists(ens, suffix_fsurdat=args.suffix_fsurdat, backend=args.backend)
+        create_ensemble_namelists(ens, suffix_fsurdat=args.suffix_fsurdat,
+                                  forcings_dir=args.forcings_dir, backend=args.backend)
         sys.stdout.write("\r[%s] " % ("Done with ensemble member: " + str(ens)))
         sys.stdout.flush()
 
