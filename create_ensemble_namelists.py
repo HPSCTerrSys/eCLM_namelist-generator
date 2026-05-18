@@ -20,6 +20,7 @@ Options
   -b, --backend BACKEND     Namelist backend: 're' (default) or 'f90nml'
   -f, --forcings-dir DIR    Forcings directory in stream files (default: ./forcings)
   --suffix-fsurdat          Add ensemble suffix to clm_inparm:fsurdat in lnd_in
+  --suffix-finidat          Add ensemble suffix to clm_inparm:finidat in lnd_in (after .clm2)
 """
 import argparse
 import os
@@ -29,7 +30,7 @@ import f90nml
 from lxml import etree
 from io import BytesIO
 
-from namelist_utils import _re_add_ens_suffix, _re_get_streams_filenames
+from namelist_utils import _re_add_ens_suffix, _re_add_ens_suffix_after_clm2, _re_get_streams_filenames
 
 
 def adapt_modelio(mod, iens, backend="re"):
@@ -104,12 +105,18 @@ def adapt_datm_in(iens, backend="re"):
             fh.write(content)
 
 
-def adapt_lnd_in(iens, suffix_fsurdat=False, backend="re"):
+def adapt_lnd_in(iens, suffix_fsurdat=False, suffix_finidat=False, backend="re"):
     """Write lnd_in_NNNN from lnd_in.
 
     If suffix_fsurdat is True, clm_inparm:fsurdat gets an ensemble suffix
     inserted before the file extension, e.g. 'surfdata.nc' -> 'surfdata_00003.nc'
-    (zero-padded to 5 digits). Otherwise lnd_in_NNNN is an unchanged copy.
+    (zero-padded to 5 digits).
+
+    If suffix_finidat is True, clm_inparm:finidat gets an ensemble suffix
+    inserted after '.clm2', e.g.
+    'case.clm2.r.2018-02-01-00000.nc' -> 'case.clm2_0001.r.2018-02-01-00000.nc'.
+
+    Otherwise lnd_in_NNNN is an unchanged copy.
     """
     if backend == "f90nml":
         nml = f90nml.read("lnd_in")
@@ -119,6 +126,11 @@ def adapt_lnd_in(iens, suffix_fsurdat=False, backend="re"):
             nml["clm_inparm"]["fsurdat"] = nml["clm_inparm"]["fsurdat"].replace(
                 ".nc", "_" + str(iens).zfill(5) + ".nc")
 
+        if suffix_finidat:
+            suffix = "_" + str(iens).zfill(4)
+            nml["clm_inparm"]["finidat"] = nml["clm_inparm"]["finidat"].replace(
+                ".clm2.", ".clm2" + suffix + ".", 1)
+
         nml.write("lnd_in_" + str(iens).zfill(4))
 
     elif backend == "re":
@@ -126,6 +138,8 @@ def adapt_lnd_in(iens, suffix_fsurdat=False, backend="re"):
             content = fh.read()
         if suffix_fsurdat:
             content = _re_add_ens_suffix(content, "fsurdat", iens, pad=5)
+        if suffix_finidat:
+            content = _re_add_ens_suffix_after_clm2(content, "finidat", iens)
         with open("lnd_in_" + str(iens).zfill(4), "w") as fh:
             fh.write(content)
 
@@ -190,7 +204,7 @@ def adapt_stream_files(iens, forcings_dir="./forcings", backend="re"):
             f.write(fstr)
 
 
-def create_ensemble_namelists(iens, suffix_fsurdat=False, forcings_dir="./forcings", backend="re"):
+def create_ensemble_namelists(iens, suffix_fsurdat=False, suffix_finidat=False, forcings_dir="./forcings", backend="re"):
     """Create all per-ensemble namelist files for ensemble member iens.
 
     Calls:
@@ -207,7 +221,7 @@ def create_ensemble_namelists(iens, suffix_fsurdat=False, forcings_dir="./forcin
 
     adapt_datm_in(iens, backend=backend)
 
-    adapt_lnd_in(iens, suffix_fsurdat=suffix_fsurdat, backend=backend)
+    adapt_lnd_in(iens, suffix_fsurdat=suffix_fsurdat, suffix_finidat=suffix_finidat, backend=backend)
 
     adapt_mosart_in(iens, backend=backend)
 
@@ -246,6 +260,12 @@ if __name__ == "__main__":
         default=False,
         help="Add ensemble suffix to clm_inparm:fsurdat in lnd_in (default: off)",
     )
+    parser.add_argument(
+        "--suffix-finidat",
+        action="store_true",
+        default=False,
+        help="Add ensemble suffix to clm_inparm:finidat in lnd_in after '.clm2' (default: off)",
+    )
 
     args = parser.parse_args()
 
@@ -253,6 +273,7 @@ if __name__ == "__main__":
 
     for ens in range(1, args.num_ensemble + 1):
         create_ensemble_namelists(ens, suffix_fsurdat=args.suffix_fsurdat,
+                                  suffix_finidat=args.suffix_finidat,
                                   forcings_dir=args.forcings_dir, backend=args.backend)
         sys.stdout.write("\r[%s] " % ("Done with ensemble member: " + str(ens)))
         sys.stdout.flush()

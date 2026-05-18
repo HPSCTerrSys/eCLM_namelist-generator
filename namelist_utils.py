@@ -70,6 +70,23 @@ def _re_add_ens_suffix(content, key, iens, pad=4):
     return re.sub(pattern, replacer, content, flags=re.IGNORECASE)
 
 
+def _re_add_ens_suffix_after_clm2(content, key, iens, pad=4):
+    """Insert _NNNN after '.clm2' in a namelist string value.
+
+    For finidat files like 'case.clm2.r.DATE.nc', inserts the suffix
+    immediately after '.clm2': 'case.clm2_0001.r.DATE.nc'.
+    pad controls the zero-padding width of the ensemble index (default: 4).
+    """
+    suffix = "_" + str(iens).zfill(pad)
+
+    def replacer(m):
+        new_val = re.sub(r"(\.clm2)(\W)", r"\g<1>" + suffix + r"\2", m.group(2))
+        return m.group(1) + new_val + m.group(3)
+
+    pattern = rf"(\b{re.escape(key)}\s*=\s*['\"])([^'\"]+)(['\"])"
+    return re.sub(pattern, replacer, content, flags=re.IGNORECASE)
+
+
 def _re_get_streams_filenames(filename):
     """Extract stream file paths (first word of each quoted streams entry)."""
     with open(filename, "r") as fh:
