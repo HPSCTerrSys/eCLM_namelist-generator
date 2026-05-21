@@ -32,9 +32,11 @@ prefix of each option flag identifies both:
 | `--driver-`          | `drv_in`        | `&cime_driver_inst`           |
 | `--pes-`             | `drv_in`        | `&cime_pes`                   |
 | `--esmf-`            | `drv_in`        | `&esmf_inparm`                |
+| `--papi-`            | `drv_in`        | `&papi_inparm`                |
 | `--pio-`             | `drv_in`        | `&pio_default_inparm`         |
 | `--prof-`            | `drv_in`        | `&prof_inparm`                |
 | `--cplflds-`         | `drv_in`        | `&seq_cplflds_inparm`         |
+| `--cplcustom-`       | `drv_in`        | `&seq_cplflds_userspec`       |
 | `--flux_mct-`        | `drv_in`        | `&seq_flux_mct_inparm`        |
 | `--clm_inparm-`      | `lnd_in`        | `&clm_inparm`                 |
 | `--ndepdyn-`         | `lnd_in`        | `&ndepdyn_nml`                |

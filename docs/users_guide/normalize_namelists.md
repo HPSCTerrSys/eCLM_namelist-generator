@@ -5,23 +5,27 @@ clean and human-readable.
 
 ## What it does
 
-The script applies three transformations to every namelist file it
+The script applies four transformations to every namelist file it
 finds:
 
-1. **Indentation** — lines inside a `&group … /` block are re-indented
+1. **Indentation** - lines inside a `&group ... /` block are re-indented
    to exactly two spaces. Group header (`&group`) and closing (`/`)
    lines are left as-is.
 
-2. **Quote style** — string values delimited by double quotes are
-   rewritten to use single quotes (`"value"` → `'value'`). The value
+2. **Quote style** - string values delimited by double quotes are
+   rewritten to use single quotes (`"value"` -> `'value'`). The value
    content is never modified.
 
-3. **Continuation alignment** — continuation lines of multi-line values are
+3. **Continuation alignment** - continuation lines of multi-line values are
    indented to align with the value start on the `key = value` line above:
    ```
      hist_fincl1 = 'SOILWATER_10CM', 'H2OSOI',
                    'SOILLIQ', 'SOILICE'
    ```
+
+4. **Equals-sign spacing** - exactly one space is placed before and after
+   the `=` sign in every `key = value` entry (`key=value` and
+   `key  =  value` are both rewritten to `key = value`).
 
 Lines outside a group (blank lines, comment blocks appended by
 `modify_case_namelists.py`, etc.) are passed through unchanged.
