@@ -1,0 +1,13 @@
+[project]
+name = "eCLM_namelist-generator"
+version = "0.1.0"
+description = "Scripts related to eCLM namelist files"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "f90nml>=1.4",
+    "lxml>=4.9",
+]
+
+[tool.setuptools]
+packages = []
