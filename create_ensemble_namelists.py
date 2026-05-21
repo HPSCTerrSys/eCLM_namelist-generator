@@ -21,6 +21,7 @@ Options
   -f, --forcings-dir DIR    Forcings directory in stream files (default: ./forcings)
   --suffix-fsurdat          Add ensemble suffix to clm_inparm:fsurdat in lnd_in
   --suffix-finidat          Add ensemble suffix to clm_inparm:finidat in lnd_in (after .clm2)
+  --suffix-paramfile        Add ensemble suffix to clm_inparm:paramfile in lnd_in
 """
 import argparse
 import os
@@ -105,7 +106,7 @@ def adapt_datm_in(iens, backend="re"):
             fh.write(content)
 
 
-def adapt_lnd_in(iens, suffix_fsurdat=False, suffix_finidat=False, backend="re"):
+def adapt_lnd_in(iens, suffix_fsurdat=False, suffix_finidat=False, suffix_paramfile=False, backend="re"):
     """Write lnd_in_NNNN from lnd_in.
 
     If suffix_fsurdat is True, clm_inparm:fsurdat gets an ensemble suffix
@@ -115,6 +116,10 @@ def adapt_lnd_in(iens, suffix_fsurdat=False, suffix_finidat=False, backend="re")
     If suffix_finidat is True, clm_inparm:finidat gets an ensemble suffix
     inserted after '.clm2', e.g.
     'case.clm2.r.2018-02-01-00000.nc' -> 'case.clm2_0001.r.2018-02-01-00000.nc'.
+
+    If suffix_paramfile is True, clm_inparm:paramfile gets an ensemble suffix
+    inserted before the file extension, e.g. 'clm5_params.c171117.nc' ->
+    'clm5_params.c171117_0001.nc' (zero-padded to 4 digits).
 
     Otherwise lnd_in_NNNN is an unchanged copy.
     """
@@ -131,6 +136,10 @@ def adapt_lnd_in(iens, suffix_fsurdat=False, suffix_finidat=False, backend="re")
             nml["clm_inparm"]["finidat"] = nml["clm_inparm"]["finidat"].replace(
                 ".clm2.", ".clm2" + suffix + ".", 1)
 
+        if suffix_paramfile:
+            nml["clm_inparm"]["paramfile"] = nml["clm_inparm"]["paramfile"].replace(
+                ".nc", "_" + str(iens).zfill(4) + ".nc")
+
         nml.write("lnd_in_" + str(iens).zfill(4))
 
     elif backend == "re":
@@ -140,6 +149,8 @@ def adapt_lnd_in(iens, suffix_fsurdat=False, suffix_finidat=False, backend="re")
             content = _re_add_ens_suffix(content, "fsurdat", iens, pad=5)
         if suffix_finidat:
             content = _re_add_ens_suffix_after_clm2(content, "finidat", iens)
+        if suffix_paramfile:
+            content = _re_add_ens_suffix(content, "paramfile", iens)
         with open("lnd_in_" + str(iens).zfill(4), "w") as fh:
             fh.write(content)
 
@@ -204,7 +215,7 @@ def adapt_stream_files(iens, forcings_dir="./forcings", backend="re"):
             f.write(fstr)
 
 
-def create_ensemble_namelists(iens, suffix_fsurdat=False, suffix_finidat=False, forcings_dir="./forcings", backend="re"):
+def create_ensemble_namelists(iens, suffix_fsurdat=False, suffix_finidat=False, suffix_paramfile=False, forcings_dir="./forcings", backend="re"):
     """Create all per-ensemble namelist files for ensemble member iens.
 
     Calls:
@@ -221,7 +232,8 @@ def create_ensemble_namelists(iens, suffix_fsurdat=False, suffix_finidat=False, 
 
     adapt_datm_in(iens, backend=backend)
 
-    adapt_lnd_in(iens, suffix_fsurdat=suffix_fsurdat, suffix_finidat=suffix_finidat, backend=backend)
+    adapt_lnd_in(iens, suffix_fsurdat=suffix_fsurdat, suffix_finidat=suffix_finidat,
+                 suffix_paramfile=suffix_paramfile, backend=backend)
 
     adapt_mosart_in(iens, backend=backend)
 
@@ -266,6 +278,12 @@ if __name__ == "__main__":
         default=False,
         help="Add ensemble suffix to clm_inparm:finidat in lnd_in after '.clm2' (default: off)",
     )
+    parser.add_argument(
+        "--suffix-paramfile",
+        action="store_true",
+        default=False,
+        help="Add ensemble suffix to clm_inparm:paramfile in lnd_in (default: off)",
+    )
 
     args = parser.parse_args()
 
@@ -274,6 +292,7 @@ if __name__ == "__main__":
     for ens in range(1, args.num_ensemble + 1):
         create_ensemble_namelists(ens, suffix_fsurdat=args.suffix_fsurdat,
                                   suffix_finidat=args.suffix_finidat,
+                                  suffix_paramfile=args.suffix_paramfile,
                                   forcings_dir=args.forcings_dir, backend=args.backend)
         sys.stdout.write("\r[%s] " % ("Done with ensemble member: " + str(ens)))
         sys.stdout.flush()
