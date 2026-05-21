@@ -17,13 +17,13 @@ a suffix (`_NNNN`).
 
 The following modifications are applied per file type:
 
-| Output file              | Source              | Modification                                                                          |
-|--------------------------|---------------------|---------------------------------------------------------------------------------------|
-| `{mod}_modelio.nml_NNNN` | `{mod}_modelio.nml` | `logfile` gets `_NNNN` inserted before `.log`                                         |
-| `datm_in_NNNN`           | `datm_in`           | Each stream filename in `shr_strdata_nml:streams` gets `_NNNN` inserted before `.txt` |
-| `lnd_in_NNNN`            | `lnd_in`            | Unchanged copy; optionally `clm_inparm:fsurdat` gets a five-digit suffix              |
-| `mosart_in_NNNN`         | `mosart_in`         | Unchanged copy                                                                        |
-| `datm.streams_NNNN.*`    | `datm.streams.*`    | `fieldInfo/filePath` is redirected from `./forcings` to `./forcings/real_NNNNN`       |
+| Output file              | Source              | Modification                                                                                                      |
+|--------------------------|---------------------|-------------------------------------------------------------------------------------------------------------------|
+| `{mod}_modelio.nml_NNNN` | `{mod}_modelio.nml` | `logfile` gets `_NNNN` inserted before `.log`                                                                     |
+| `datm_in_NNNN`           | `datm_in`           | Each stream filename in `shr_strdata_nml:streams` gets `_NNNN` inserted before `.txt`                             |
+| `lnd_in_NNNN`            | `lnd_in`            | Unchanged copy; optionally `clm_inparm:fsurdat` (5-digit), `finidat` (after `.clm2`), or `paramfile` get a suffix |
+| `mosart_in_NNNN`         | `mosart_in`         | Unchanged copy                                                                                                    |
+| `datm.streams_NNNN.*`    | `datm.streams.*`    | `fieldInfo/filePath` is redirected from `./forcings` to `./forcings/real_NNNNN`                                   |
 
 The `{mod}` components processed for modelio files are:
 `atm`, `esp`, `glc`, `ice`, `lnd`, `ocn`, `rof`, `wav`, `cpl`.
@@ -44,16 +44,31 @@ python3 create_ensemble_namelists.py \
     --rundir /path/to/rundir \
     --num_ensemble 50 \
     --suffix-fsurdat
+
+# Add per-member suffix to the initial conditions file
+python3 create_ensemble_namelists.py \
+    --rundir /path/to/rundir \
+    --num_ensemble 50 \
+    --suffix-finidat
+
+# Add per-member suffix to the CLM parameter file
+python3 create_ensemble_namelists.py \
+    --rundir /path/to/rundir \
+    --num_ensemble 50 \
+    --suffix-paramfile
 ```
 
 ### Options
 
-| Option                 | Description                                                                  |
-|------------------------|------------------------------------------------------------------------------|
-| `-r`, `--rundir`       | Directory containing the base namelist files. Defaults to `.`                |
-| `-n`, `--num_ensemble` | Number of ensemble members to generate. Defaults to `96`                     |
-| `-b`, `--backend`      | Namelist backend: `re` (default, regexp-based) or `f90nml`                   |
-| `--suffix-fsurdat`     | Also add a five-digit member suffix to `clm_inparm:fsurdat` in `lnd_in_NNNN` |
+| Option                 | Description                                                                                      |
+|------------------------|--------------------------------------------------------------------------------------------------|
+| `-r`, `--rundir`       | Directory containing the base namelist files. Defaults to `.`                                    |
+| `-n`, `--num_ensemble` | Number of ensemble members to generate. Defaults to `96`                                         |
+| `-b`, `--backend`      | Namelist backend: `re` (default, regexp-based) or `f90nml`                                       |
+| `-f`, `--forcings-dir` | Forcings directory used in stream file `fieldInfo/filePath` entries. Defaults to `./forcings`    |
+| `--suffix-fsurdat`     | Add a five-digit member suffix to `clm_inparm:fsurdat` in `lnd_in_NNNN`                          |
+| `--suffix-finidat`     | Add a four-digit member suffix to `clm_inparm:finidat` in `lnd_in_NNNN`, inserted after `.clm2`  |
+| `--suffix-paramfile`   | Add a four-digit member suffix to `clm_inparm:paramfile` in `lnd_in_NNNN`, inserted before `.nc` |
 
 ## Expected run directory layout
 
