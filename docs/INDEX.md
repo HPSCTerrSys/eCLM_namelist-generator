@@ -9,8 +9,11 @@
 - ectk: library for eCLM namelist file creation:
   https://github.com/HPSCTerrSys/ectk
 
-- Configuration repositories:
+- Template configuration repositories on Github:
   https://github.com/orgs/HPSCTerrSys/teams/configurations/repositories
+
+- Case-specific configuration repositories on GitLab (internal):
+  https://icg4geo.icg.kfa-juelich.de/Configurations/CLM
 
 - the TSMP2 workflow-engine:
   https://github.com/HPSCTerrSys/TSMP2_workflow-engine
