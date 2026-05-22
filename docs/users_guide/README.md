@@ -19,3 +19,12 @@ generation and manipulation.
 - [create_ensemble_namelists.py](create_ensemble_namelists.md):
   Creates per-ensemble-member namelist files for eCLM-PDAF Data
   Assimilation experiments.
+
+## Installation
+
+From the repository root install the dependencies using the provided
+`pyproject.toml`:
+
+```bash
+pip install .
+```
