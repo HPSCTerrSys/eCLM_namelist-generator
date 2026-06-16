@@ -770,6 +770,8 @@ if __name__ == "__main__":
 
     group_clm_soilstate = parser.add_argument_group("clm_soilstate", "lnd_in &clm_soilstate_inparm")
     group_clm_soilstate.add_argument("--clm_soilstate-organic_frac_squared", default=None, action=argparse.BooleanOptionalAction, help="organic_frac_squared")
+    group_clm_soilstate.add_argument("--clm_soilstate-soil_hyd_inparm_from_file", default=None, action=argparse.BooleanOptionalAction, help="soil_hyd_inparm_from_file (read baseline hydraulic params THETAS, SHAPE_PARAM, PSIS_SAT, KSAT from surface file)")
+    group_clm_soilstate.add_argument("--clm_soilstate-soil_hyd_inparm_from_file_adj", default=None, action=argparse.BooleanOptionalAction, help="soil_hyd_inparm_from_file_adj (read organic-matter-adjusted hydraulic params *_adj from surface file, overwriting organic mixing results)")
 
     group_clm_nitrogen = parser.add_argument_group("clm_nitrogen", "lnd_in &clm_nitrogen")
     group_clm_nitrogen.add_argument("--clm_nitrogen-carbon_resp_opt", type=str, default=None, help="carbon_resp_opt")
