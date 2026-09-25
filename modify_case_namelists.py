@@ -897,6 +897,17 @@ if __name__ == "__main__":
     group_shr_strdata.add_argument("--shr_strdata_nml-domainfile", type=str, default=None, help="domainfile")
     group_shr_strdata.add_argument("--shr_strdata_nml-dtlimit", type=str, default=None, help="dtlimit (full Fortran list string)")
     group_shr_strdata.add_argument("--shr_strdata_nml-streams", type=str, default=None, help="streams (full Fortran list string)")
+    group_shr_strdata.add_argument("--shr_strdata_nml-fillalgo", type=str, default=None, help="fillalgo (full Fortran list string)")
+    group_shr_strdata.add_argument("--shr_strdata_nml-fillmask", type=str, default=None, help="fillmask (full Fortran list string)")
+    group_shr_strdata.add_argument("--shr_strdata_nml-fillread", type=str, default=None, help="fillread (full Fortran list string)")
+    group_shr_strdata.add_argument("--shr_strdata_nml-fillwrite", type=str, default=None, help="fillwrite (full Fortran list string)")
+    group_shr_strdata.add_argument("--shr_strdata_nml-mapalgo", type=str, default=None, help="mapalgo (full Fortran list string)")
+    group_shr_strdata.add_argument("--shr_strdata_nml-mapmask", type=str, default=None, help="mapmask (full Fortran list string)")
+    group_shr_strdata.add_argument("--shr_strdata_nml-mapread", type=str, default=None, help="mapread (full Fortran list string)")
+    group_shr_strdata.add_argument("--shr_strdata_nml-mapwrite", type=str, default=None, help="mapwrite (full Fortran list string)")
+    group_shr_strdata.add_argument("--shr_strdata_nml-readmode", type=str, default=None, help="readmode (full Fortran list string)")
+    group_shr_strdata.add_argument("--shr_strdata_nml-taxmode", type=str, default=None, help="taxmode (full Fortran list string)")
+    group_shr_strdata.add_argument("--shr_strdata_nml-tintalgo", type=str, default=None, help="tintalgo (full Fortran list string)")
     group_shr_strdata.add_argument("--shr_strdata_nml-vectors", type=str, default=None, help="vectors")
 
     # -------------------------------------------------------------------------
