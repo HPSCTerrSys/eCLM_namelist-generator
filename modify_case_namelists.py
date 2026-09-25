@@ -206,6 +206,8 @@ _LND_IN_PREFIX_GROUP = {
     "cn_general_": "cn_general",
     "lifire_": "lifire_inparm",
     "clm_canopy_": "clm_canopy_inparm",
+    "dynamic_subgrid_": "dynamic_subgrid",
+    "clm_initinterp_": "clm_initinterp_inparm",
 }
 
 # Keys whose value spans multiple comma-separated tokens (replace whole value until EOL//)
@@ -668,6 +670,16 @@ if __name__ == "__main__":
     group_clm_inparm.add_argument("--clm_inparm-use_century_decomp", default=None, action=argparse.BooleanOptionalAction, help="use_century_decomp")
     group_clm_inparm.add_argument("--clm_inparm-use_dynroot", default=None, action=argparse.BooleanOptionalAction, help="use_dynroot")
     group_clm_inparm.add_argument("--clm_inparm-use_fates", default=None, action=argparse.BooleanOptionalAction, help="use_fates")
+    group_clm_inparm.add_argument("--clm_inparm-use_init_interp", default=None, action=argparse.BooleanOptionalAction, help="use_init_interp")
+
+    group_dynamic_subgrid = parser.add_argument_group("dynamic_subgrid", "lnd_in &dynamic_subgrid")
+    group_dynamic_subgrid.add_argument("--dynamic_subgrid-do_harvest", default=None, action=argparse.BooleanOptionalAction, help="do_harvest")
+    group_dynamic_subgrid.add_argument("--dynamic_subgrid-do_transient_crops", default=None, action=argparse.BooleanOptionalAction, help="do_transient_crops")
+    group_dynamic_subgrid.add_argument("--dynamic_subgrid-do_transient_pfts", default=None, action=argparse.BooleanOptionalAction, help="do_transient_pfts")
+    group_dynamic_subgrid.add_argument("--dynamic_subgrid-flanduse_timeseries", type=str, default=None, help="flanduse_timeseries")
+
+    group_clm_initinterp = parser.add_argument_group("clm_initinterp", "lnd_in &clm_initinterp_inparm")
+    group_clm_initinterp.add_argument("--clm_initinterp-init_interp_method", type=str, default=None, help="init_interp_method")
 
     group_ndepdyn = parser.add_argument_group("ndepdyn", "lnd_in &ndepdyn_nml")
     group_ndepdyn.add_argument("--ndepdyn-ndep_taxmode", type=str, default=None, help="ndep_taxmode")
